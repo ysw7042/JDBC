@@ -112,7 +112,7 @@ public final class ConnectionPool {
 
 	private void loadConf() {
 		ClassLoader cl = getClass().getClassLoader(); 
-		InputStream in=cl.getResourceAsStream("site/itwill/dbcp/db.properties"); 
+		InputStream in=cl.getResourceAsStream("xyz/itwill/dbcp/db.properties"); 
 		Properties p = new Properties(); 
 		try { 
 			p.load(in); 
@@ -125,7 +125,7 @@ public final class ConnectionPool {
 		this.password = (String)p.get("passwd"); 
 		this.initialCons = Integer.parseInt((String)p.get("initialCons"));
 		this.maxCons = Integer.parseInt((String)p.get("maxCons"));
-		this.block = new Boolean((String)p.get("block")).booleanValue();
+		this.block = Boolean.getBoolean((String)p.get("block"));
 		this.timeout = Long.parseLong((String)p.get("timeout"));
 	}
 
