@@ -1,0 +1,26 @@
+● 개인 프로젝트 제출 파일
+
+1.프로그램 배포파일(JAR 파일) 
+
+Eclipse >> Project >> 오른쪽 버튼 >> Export >> Java >> Runnable JAR File
+
+>> NEXT >> Launch Configuration : 프로그램(클래스) 선택 
+
+>> Export destination - Brower : JAR 파일명(~.jar) 입력 후 저장 >> Finish 
+
+
+2.소스 압축파일(ZIP 파일)
+
+탐색기 >> WorkSpace 폴더 >> 프로젝트 폴더 >> 압축(ZIP)
+
+
+3.SQL 백업파일(SQL 파일)
+
+Sql Developer >> 접속 >> 테이블 >> 테이블 선택 >> 오른쪽 버튼 
+
+>> 익스포트 >> 파일 - 찾아보기 : SQL 파일명(~.sql) 입력 후 저장
+
+>> 다음 >> 다음 >> 완료
+
+
+4.발표파일(PPT 파일)
