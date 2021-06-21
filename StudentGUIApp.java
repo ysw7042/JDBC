@@ -237,17 +237,18 @@ public class StudentGUIApp extends JFrame implements ActionListener {
 				if (cmd != UPDATE && cmd != UPDATE_CHANGE) {
 					setEnable(UPDATE);
 				} else if (cmd != UPDATE_CHANGE) {
-					setEnable(UPDATE_CHANGE);
-				} else  {
-					initDisplay();
+					searchNoStudent();
+				} else {
+					modifyStudent();
 				}
 			} else if (c == searchB) {
 				if (cmd != SEARCH) {
 					setEnable(SEARCH);
 				} else {
-					initDisplay();
+					searchNameStudent();
 				}
 			} else if (c == cancelB) {
+				displayAllStudent();
 				initDisplay();
 			}
 		} catch (Exception e) {
@@ -256,6 +257,7 @@ public class StudentGUIApp extends JFrame implements ActionListener {
 	}
 	
 	//STUDENT Å×ÀÌºí¿¡ ÀúÀåµÈ ¸ğµç ÇĞ»ıÁ¤º¸¸¦ °Ë»öÇÏ¿© JTable ÄÄÆÛ³ÍÆ®¿¡ Ãâ·ÂÇÏ´Â ¸Ş¼Òµå
+	// => »ı¼ºÀÚ ¶Ç´Â ¸ğµç ÀÌº¥Æ® °ü·Ã ¸Ş¼Òµå¿¡¼­ È£Ãâ
 	public void displayAllStudent() {
 		//STUDENT Å×ÀÌºí¿¡ ÀúÀåµÈ ¸ğµç ÇĞ»ıÁ¤º¸¸¦ °Ë»öÇÏ¿© ¹İÈ¯ÇÏ´Â DAO Å¬·¡½ºÀÇ ¸Ş¼Òµå È£Ãâ
 		List<StudentDTO> studentList=StudentDAO.getDAO().selectAllStudentList();
@@ -295,6 +297,7 @@ public class StudentGUIApp extends JFrame implements ActionListener {
 	}
 	
 	//JTextField ÄÄÆÛ³ÍÆ®·Î ÀÔ·ÂµÈ ÇĞ»ıÁ¤º¸¸¦ Á¦°ø¹Ş¾Æ STUDENT Å×ÀÌºí¿¡ ÀúÀåÇÏ´Â ¸Ş¼Òµå
+	// => ÀÌº¥Æ® ÇÚµé·¯ ¸Ş¼Òµå¿¡¼­ [ADD]»óÅÂ¿¡¼­ [Ãß°¡]¹öÆ°À» ´©¸¥ °æ¿ì È£Ãâ
 	public void addStudent() {
 		String noTemp=noTF.getText();
 		
@@ -395,6 +398,7 @@ public class StudentGUIApp extends JFrame implements ActionListener {
 	
 	//JTextField ÄÄÆÛ³ÍÆ®·Î ÀÔ·ÂµÈ ÇĞ¹øÀ» Á¦°ø¹Ş¾Æ STUDENT Å×ÀÌºí¿¡ ÀúÀåµÈ ÇØ´ç ÇĞ¹øÀÇ
 	//ÇĞ»ıÁ¤º¸¸¦ »èÁ¦ÇÏ´Â ¸Ş¼Òµå
+	// => ÀÌº¥Æ® ÇÚµé·¯ ¸Ş¼Òµå¿¡¼­ [DELETE]»óÅÂ¿¡¼­ [»èÁ¦]¹öÆ°À» ´©¸¥ °æ¿ì È£Ãâ	
 	public void removeStudent() {
 		String noTemp=noTF.getText();
 		
@@ -425,7 +429,175 @@ public class StudentGUIApp extends JFrame implements ActionListener {
 
 		initDisplay();
 	}
+	
+	//JTextField ÄÄÆÛ³ÍÆ®¿¡¼­ ÀÔ·ÂµÈ ÇĞ¹øÀ» Á¦°ø¹Ş¾Æ STUDENT Å×ÀÌºí¿¡ ÀúÀåµÈ ÇØ´ç ÇĞ»ıÁ¤º¸¸¦
+	//°Ë»öÇÏ¿© JTextField ÄÄÆÛ³ÍÆ®¿¡ Ãâ·ÂÇÏ´Â ¸Ş¼Òµå
+	// => ÀÌº¥Æ® ÇÚµé·¯ ¸Ş¼Òµå¿¡¼­ [UPDATE]»óÅÂ¿¡¼­ [º¯°æ]¹öÆ°À» ´©¸¥ °æ¿ì È£Ãâ
+	public void searchNoStudent() {
+		String noTemp=noTF.getText();
+		
+		if(noTemp.equals("")) {//ÀÔ·Â°ªÀÌ ¾ø´Â °æ¿ì
+			JOptionPane.showMessageDialog(this, "ÇĞ¹øÀ» ¹İµå½Ã ÀÔ·ÂÇØ ÁÖ¼¼¿ä.");
+			noTF.requestFocus();//ÀÔ·ÂÃĞÁ¡À» ÀÌµ¿ÇÏ´Â ¸Ş¼Òµå
+			return;
+		}
+		
+		String noReg="\\d{4}";//Á¤±ÔÇ¥Çö½Ä
+		if(!Pattern.matches(noReg, noTemp)) {//Á¤±ÔÇ¥Çö½Ä°ú ÀÔ·Â°ªÀÇ Çü½ÄÀÌ ´Ù¸¥ °æ¿ì
+			JOptionPane.showMessageDialog(this, "ÇĞ¹øÀº 4ÀÚ¸®ÀÇ ¼ıÀÚ·Î¸¸ ÀÔ·ÂÇØ ÁÖ¼¼¿ä.");
+			noTF.requestFocus();
+			return;
+		}
+		
+		int no=Integer.parseInt(noTemp);
+		
+		//ÇĞ¹øÀ» Àü´ŞÇÏ¿© STUDENT Å×ÀÌºí¿¡ ÇØ´ç ÇĞ¹øÀÇ ÇĞ»ıÁ¤º¸¸¦ °Ë»öÇÏ¿© ¹İÈ¯ÇÏ´Â DAO
+		//Å¬·¡½ºÀÇ ¸Ş¼Òµå È£Ãâ
+		StudentDTO student=StudentDAO.getDAO().selectNoStudent(no);
+		if(student==null) {//°Ë»öµÇ¾î ¹İÈ¯µÈ ÇĞ»ıÁ¤º¸°¡ ¾ø´Â °æ¿ì
+			JOptionPane.showMessageDialog(this, "º¯°æÇÏ°íÀÚ ÇÏ´Â ÇĞ¹øÀÇ ÇĞ»ıÁ¤º¸°¡ ¾ø½À´Ï´Ù.");
+			noTF.requestFocus();
+			noTF.setText("");//JTextField ÄÄÆÛ³ÍÆ® ÃÊ±âÈ­
+			return;
+		}
+		
+		//°Ë»öµÈ ÇĞ»ıÁ¤º¸·Î JTextField ÄÄÆÛ³ÍÆ® º¯°æ
+		noTF.setText(student.getNo()+"");
+		nameTF.setText(student.getName());
+		phoneTF.setText(student.getPhone());
+		addressTF.setText(student.getAddress());
+		birthdayTF.setText(student.getBirthday());
+		
+		//UPDATE_CHANGE »óÅÂ º¯°æ
+		setEnable(UPDATE_CHANGE);
+	}
+	
+	//JTextField ÄÄÆÛ³ÍÆ®·Î ÀÔ·ÂµÈ ÇĞ»ıÁ¤º¸¸¦ Á¦°ø¹Ş¾Æ STUDENT Å×ÀÌºí¿¡ ÀúÀåµÈ ±âÁ¸
+	//ÇĞ»ıÁ¤º¸¸¦ º¯°æÇÏ´Â ¸Ş¼Òµå
+	// => ÀÌº¥Æ® ÇÚµé·¯ ¸Ş¼Òµå¿¡¼­ [UPDATE_CHANGE]»óÅÂ¿¡¼­ [º¯°æ]¹öÆ°À» ´©¸¥ °æ¿ì È£Ãâ
+	public void modifyStudent() {
+		int no=Integer.parseInt(noTF.getText());
+		
+		String name=nameTF.getText();
+		
+		if(name.equals("")) {//ÀÔ·Â°ªÀÌ ¾ø´Â °æ¿ì
+			JOptionPane.showMessageDialog(this, "ÀÌ¸§À» ¹İµå½Ã ÀÔ·ÂÇØ ÁÖ¼¼¿ä.");
+			nameTF.requestFocus();//ÀÔ·ÂÃĞÁ¡À» ÀÌµ¿ÇÏ´Â ¸Ş¼Òµå
+			return;
+		}
+		
+		String nameReg="[°¡-ÆR]{2,7}";//Á¤±ÔÇ¥Çö½Ä
+		if(!Pattern.matches(nameReg, name)) {//Á¤±ÔÇ¥Çö½Ä°ú ÀÔ·Â°ªÀÇ Çü½ÄÀÌ ´Ù¸¥ °æ¿ì
+			JOptionPane.showMessageDialog(this, "ÀÌ¸§Àº 2~5 ¹üÀ§ÀÇ ÇÑ±Û¸¸ ÀÔ·ÂÇØ ÁÖ¼¼¿ä.");
+			nameTF.requestFocus();
+			return;
+		}
+		
+		String phone=phoneTF.getText();
+		
+		if(phone.equals("")) {//ÀÔ·Â°ªÀÌ ¾ø´Â °æ¿ì
+			JOptionPane.showMessageDialog(this, "ÀüÈ­¹øÈ£¸¦ ¹İµå½Ã ÀÔ·ÂÇØ ÁÖ¼¼¿ä.");
+			phoneTF.requestFocus();//ÀÔ·ÂÃĞÁ¡À» ÀÌµ¿ÇÏ´Â ¸Ş¼Òµå
+			return;
+		}
+		
+		String phoneReg="(01[016789])-\\d{3,4}-\\d{4}";//Á¤±ÔÇ¥Çö½Ä
+		if(!Pattern.matches(phoneReg, phone)) {//Á¤±ÔÇ¥Çö½Ä°ú ÀÔ·Â°ªÀÇ Çü½ÄÀÌ ´Ù¸¥ °æ¿ì
+			JOptionPane.showMessageDialog(this, "ÀüÈ­¹øÈ£¸¦ Çü½Ä¿¡ ¸Â°Ô ÀÔ·ÂÇØ ÁÖ¼¼¿ä.");
+			phoneTF.requestFocus();
+			return;
+		}
+		
+		String address=addressTF.getText();
+		
+		if(address.equals("")) {//ÀÔ·Â°ªÀÌ ¾ø´Â °æ¿ì
+			JOptionPane.showMessageDialog(this, "ÁÖ¼Ò¸¦ ¹İµå½Ã ÀÔ·ÂÇØ ÁÖ¼¼¿ä.");
+			addressTF.requestFocus();//ÀÔ·ÂÃĞÁ¡À» ÀÌµ¿ÇÏ´Â ¸Ş¼Òµå
+			return;
+		}
+		
+		String birthday=birthdayTF.getText();
+		
+		if(birthday.equals("")) {//ÀÔ·Â°ªÀÌ ¾ø´Â °æ¿ì
+			JOptionPane.showMessageDialog(this, "»ı³â¿ùÀÏÀ» ¹İµå½Ã ÀÔ·ÂÇØ ÁÖ¼¼¿ä.");
+			birthdayTF.requestFocus();//ÀÔ·ÂÃĞÁ¡À» ÀÌµ¿ÇÏ´Â ¸Ş¼Òµå
+			return;
+		}
+		
+		String birthdayReg="(19|20)\\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])";//Á¤±ÔÇ¥Çö½Ä
+		if(!Pattern.matches(birthdayReg, birthday)) {//Á¤±ÔÇ¥Çö½Ä°ú ÀÔ·Â°ªÀÇ Çü½ÄÀÌ ´Ù¸¥ °æ¿ì
+			JOptionPane.showMessageDialog(this, "»ı³â¿ùÀÏÀ» Çü½Ä¿¡ ¸Â°Ô ÀÔ·ÂÇØ ÁÖ¼¼¿ä.");
+			birthdayTF.requestFocus();
+			return;
+		}
+		
+		//DTO ÀÎ½ºÅÏ½º¸¦ »ı¼ºÇÏ°í ÄÄÆÛ³ÍÆ®ÀÇ ÀÔ·Â°ªÀ¸·Î ÇÊµå°ª º¯°æ
+		StudentDTO student=new StudentDTO();
+		student.setNo(no);
+		student.setName(name);
+		student.setPhone(phone);
+		student.setAddress(address);
+		student.setBirthday(birthday);
+		
+		//ÇĞ»ıÁ¤º¸¸¦ Àü´ŞÇÏ¿© STUDENT Å×ÀÌºí¿¡ ÀúÀåµÈ ±âÁ¸ ÇĞ»ıÁ¤º¸¸¦ º¯°æÇÏ´Â DAO Å¬·¡½ºÀÇ
+		//¸Ş¼Òµå È£Ãâ
+		int rows=StudentDAO.getDAO().updateStudent(student);
+		
+		JOptionPane.showMessageDialog(this, rows+"¸íÀÇ ÇĞ»ıÁ¤º¸¸¦ º¯°æ ÇÏ¿´½À´Ï´Ù.");
+		
+		displayAllStudent();
+		initDisplay();
+	}
+	
+	//JTextField ÄÄÆÛ³ÍÆ®¿¡¼­ ÀÔ·ÂµÈ ÀÌ¸§À» Á¦°ø¹Ş¾Æ STUDENT Å×ÀÌºí¿¡ ÀúÀåµÈ ÇØ´ç ÇĞ»ıÁ¤º¸¸¦
+	//°Ë»öÇÏ¿© JTable ÄÄÆÛ³ÍÆ®¿¡ Ãâ·ÂÇÏ´Â ¸Ş¼Òµå
+	// => ÀÌº¥Æ® ÇÚµé·¯ ¸Ş¼Òµå¿¡¼­ [SEARCH]»óÅÂ¿¡¼­ [°Ë»ö]¹öÆ°À» ´©¸¥ °æ¿ì È£Ãâ
+	public void searchNameStudent() {
+		String name=nameTF.getText();
+		
+		if(name.equals("")) {//ÀÔ·Â°ªÀÌ ¾ø´Â °æ¿ì
+			JOptionPane.showMessageDialog(this, "ÀÌ¸§À» ¹İµå½Ã ÀÔ·ÂÇØ ÁÖ¼¼¿ä.");
+			nameTF.requestFocus();//ÀÔ·ÂÃĞÁ¡À» ÀÌµ¿ÇÏ´Â ¸Ş¼Òµå
+			return;
+		}
+		
+		String nameReg="[°¡-ÆR]{2,7}";//Á¤±ÔÇ¥Çö½Ä
+		if(!Pattern.matches(nameReg, name)) {//Á¤±ÔÇ¥Çö½Ä°ú ÀÔ·Â°ªÀÇ Çü½ÄÀÌ ´Ù¸¥ °æ¿ì
+			JOptionPane.showMessageDialog(this, "ÀÌ¸§Àº 2~5 ¹üÀ§ÀÇ ÇÑ±Û¸¸ ÀÔ·ÂÇØ ÁÖ¼¼¿ä.");
+			nameTF.requestFocus();
+			return;
+		}
+		
+		//ÀÌ¸§À» Àü´ŞÇÏ¿© STUDENT Å×ÀÌºí¿¡ ÀúÀåµÈ ÇØ´ç ÀÌ¸§ÀÇ ÇĞ»ıÁ¤º¸¸¦ °Ë»öÇÏ¿© ¹İÈ¯ÇÏ´Â
+		//DAO Å¬·¡½ºÀÇ ¸Ş¼Òµå È£Ãâ
+		List<StudentDTO> studentList=StudentDAO.getDAO().selectNameStudentList(name);
+		
+		if(studentList.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "°Ë»öµÈ ÇĞ»ıÁ¤º¸°¡ ¾ø½À´Ï´Ù.");
+			return;
+		}
+		
+		DefaultTableModel model=(DefaultTableModel)table.getModel();
+		
+		for(int i=model.getRowCount();i>0;i--) {
+			model.removeRow(0);
+		}
+		
+		for(StudentDTO student:studentList) {
+			Vector<Object> rowData=new Vector<Object>();
+			rowData.add(student.getNo());
+			rowData.add(student.getName());
+			rowData.add(student.getPhone());
+			rowData.add(student.getAddress());
+			rowData.add(student.getBirthday());
+			model.addRow(rowData);
+		}
+		
+		initDisplay();
+	}
 }
+
+
 
 
 
